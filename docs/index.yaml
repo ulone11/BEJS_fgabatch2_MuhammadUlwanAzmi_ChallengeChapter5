@@ -1,0 +1,692 @@
+swagger: "2.0"
+info:
+  title: API Documentation
+  description: API documentation for the banking application
+  version: "1.0.0"
+basePath: /api/v1
+schemes:
+  - http
+tags:
+  - name: Users
+  - name: Accounts
+  - name: Authentications
+  - name: Transactions
+paths:
+  /users:
+    get:
+      summary: Get all users
+      tags:
+      - Users
+      description: Retrieve a list of all users
+      responses:
+        200:
+          description: List of users
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+        500:
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Internal server error"
+
+    post:
+      summary: Create a new user with profile
+      tags:
+      - Users
+      description: Register a new user and create their profile
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                example: "contoh@mail.com"
+              name:
+                type: string
+                example: "contohnama"
+              password:
+                type: string
+                example: "tespassword"
+              phone_number:
+                type: string
+                example: "+6120392303821"
+              address:
+                type: string
+                example: "jalan depan rumah"
+      responses:
+        201:
+          description: User created successfully
+          schema:
+            $ref: '#/definitions/User'
+        400:
+          description: Bad request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+        409:
+          description: Email is already registered
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Email is already registered"
+        500:
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /users/{id}:
+    get:
+      summary: Get user by ID
+      tags:
+      - Users
+      description: Retrieve a specific user by their ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique ID of the user
+          schema:
+            type: string
+      responses:
+        200:
+          description: User object
+          schema:
+            $ref: '#/definitions/User'
+        400:
+          description: User ID not found
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+        500:
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+    put:
+      summary: Update user and profile
+      tags:
+      - Users
+      description: Update an existing user and their profile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique ID of the user
+          schema:
+            type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              name:
+                type: string
+              password:
+                type: string
+              phone_number:
+                type: string
+              address:
+                type: string
+      responses:
+        200:
+          description: Updated user object
+          schema:
+            $ref: '#/definitions/User'
+        400:
+          description: User not found or bad request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+        500:
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+    delete:
+      summary: Delete user by ID
+      tags:
+      - Users
+      description: Delete a user and their profile by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique ID of the user
+          schema:
+            type: string
+      responses:
+        204:
+          description: User deleted successfully
+        500:
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /accounts:
+    get:
+      summary: Get all accounts
+      tags:
+      - Accounts
+      description: Retrieve a list of all accounts
+      responses:
+        200:
+          description: List of accounts
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Account'
+        500:
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+    post:
+      summary: Create a new account
+      tags:
+      - Accounts
+      description: Create a new account for a user
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              account_name:
+                type: string
+              balance:
+                type: number
+                format: float
+              userId:
+                type: string
+      responses:
+        201:
+          description: Account created successfully
+          schema:
+            $ref: '#/definitions/Account'
+        400:
+          description: Bad request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+        500:
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /accounts/{id}:
+    get:
+      summary: Get account by ID
+      tags:
+      - Accounts
+      description: Retrieve a specific account by its ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique ID of the account
+          schema:
+            type: string
+      responses:
+        200:
+          description: Account object
+          schema:
+            $ref: '#/definitions/Account'
+        400:
+          description: Account ID not found
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+        500:
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+    put:
+      summary: Update an account
+      tags:
+      - Accounts
+      description: Update the details of an existing account
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique ID of the account
+          schema:
+            type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              account_name:
+                type: string
+              balance:
+                type: number
+                format: float
+      responses:
+        200:
+          description: Updated account object
+          schema:
+            $ref: '#/definitions/Account'
+        400:
+          description: Account not found or bad request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+        500:
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+    delete:
+      summary: Delete an account
+      tags:
+      - Accounts
+      description: Delete an account by its ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique ID of the account
+          schema:
+            type: string
+      responses:
+        200:
+          description: Account deleted successfully
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              deletedAccount:
+                $ref: '#/definitions/Account'
+        500:
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /accounts/user/{userId}:
+    get:
+      summary: Get accounts by user ID
+      tags:
+      - Accounts
+      description: Retrieve all accounts associated with a specific user ID
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The unique ID of the user
+          schema:
+            type: string
+      responses:
+        200:
+          description: List of accounts for the user
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Account'
+        204:
+          description: User has no accounts
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+        400:
+          description: User ID not found
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+        500:
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /login:
+    get:
+      summary: Login user
+      tags: 
+      - Authentications
+      description: Authenticate a user and retrieve a token
+      parameters:
+        - name: email
+          in: query
+          required: true
+          description: The email of the user
+          schema:
+            type: string
+        - name: password
+          in: query
+          required: true
+          description: The password of the user
+          schema:
+            type: string
+      responses:
+        200:
+          description: Authentication successful
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              message:
+                type: string
+              data:
+                type: object
+                properties:
+                  token:
+                    type: string
+        401:
+          description: Invalid email or password
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+        500:
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /register:
+    post:
+      summary: Register user
+      tags: 
+      - Authentications
+      description: Register a new user with profile
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              name:
+                type: string
+              password:
+                type: string
+              phone_number:
+                type: string
+              address:
+                type: string
+      responses:
+        201:
+          description: User created successfully
+          schema:
+            $ref: '#/definitions/User'
+        400:
+          description: Bad request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+        409:
+          description: Email is already registered
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+        500:
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /authenticate:
+    get:
+      summary: Check authentication
+      tags: 
+      - Authentications
+      description: Verify if the user is authenticated
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Authentication successful
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              message:
+                type: string
+        401:
+          description: Authentication failed
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+        500:
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+  /transactions:
+    get:
+      summary: Retrieve all Transactions
+      tags:
+      - Transactions
+      responses:
+        200:
+          description: List of transactions
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Transactions'
+        500:
+          description: Internal Server Error
+    post:
+      summary: Create new transaction
+      tags:
+      - Transactions
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              amount:
+                type: number
+                example: 25000
+              source_account_id:
+                type: string
+              destination_account_id:
+                type: string
+      responses:
+        201:
+          description: Transaction created successfully
+          schema:
+            $ref: '#/definitions/Transactions'
+        400:
+          description: Bad request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+        500:
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+  /transactions/{id}:
+    get:
+      summary: Retrieve transaction by its id
+      tags:
+      - Transactions
+      responses:
+        200:
+          description: Retrive successfully
+          schema:
+            $ref: '#/definitions/Transactions'
+        400:
+          description: Bad request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "transaction not found"
+  /transactions/account/{accountid}:
+    get:
+      summary: Retrieve transactions by its account id
+      tags:
+      - Transactions
+      responses:
+        200:
+          description: Retrive successfully
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Transactions'
+        400:
+          description: Bad request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "error message:"
+
+
+definitions:
+  User:
+    type: object
+    properties:
+      id:
+        type: string
+        example: "aoscbub209"
+      email:
+        type: string
+        example: "contoh@mail.com"
+      name:
+        type: string
+        example: "contohnama"
+      password:
+        type: string
+        example: "wdiua08dwaudnadh012d19hd3"
+      profile:
+        type: object
+        properties:
+          phone_number:
+            type: string
+            example: "+6120392303821"
+          address:
+            type: string
+            example: "jalan depan rumah"
+
+  Account:
+    type: object
+    properties:
+      id:
+        type: string
+      account_name:
+        type: string
+      account_number:
+        type: integer
+      balance:
+        type: decimal
+      userId:
+        type: string
+      createdAt:
+        type: string
+        format: date-time
+      updatedAt:
+        type: string
+        format: date-time
+
+  Transactions:
+    properties: 
+      id:
+        type: string
+      amount:
+        type: number
+      date:
+        type: string
+        format: date-time
+      source_account_id:
+        type: string
+      destination_account_id:
+        type: string
+      
+
+securityDefinitions:
+  bearerAuth:
+    type: http
+    scheme: bearer
+    bearerFormat: JWT
